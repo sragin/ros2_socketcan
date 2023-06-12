@@ -37,6 +37,8 @@ SocketCanSenderNode::SocketCanSenderNode(rclcpp::NodeOptions options)
   timeout_ns_ = std::chrono::duration_cast<std::chrono::nanoseconds>(
     std::chrono::duration<double>(timeout_sec));
 
+  cnt = 0;
+
   RCLCPP_INFO(this->get_logger(), "interface: %s", interface_.c_str());
   RCLCPP_INFO(this->get_logger(), "timeout(s): %f", timeout_sec);
 }
@@ -106,6 +108,10 @@ void SocketCanSenderNode::on_frame(const can_msgs::msg::Frame::SharedPtr msg)
       CanId(msg->id, 0, type, StandardFrame);
     try {
       sender_->send(msg->data.data(), msg->dlc, send_id, timeout_ns_);
+      if (cnt++ % 100 == 0) {
+        RCLCPP_INFO(this->get_logger(), "send %x", msg->data.data());
+        cnt = 0;
+      }
     } catch (const std::exception & ex) {
       RCLCPP_WARN_THROTTLE(
         this->get_logger(), *this->get_clock(), 1000,

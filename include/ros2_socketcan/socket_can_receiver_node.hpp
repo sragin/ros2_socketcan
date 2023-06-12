@@ -72,11 +72,13 @@ public:
 
 private:
   std::string interface_;
+  std::string topic_name_;
   std::shared_ptr<lc::LifecyclePublisher<can_msgs::msg::Frame>> frames_pub_;
   std::unique_ptr<SocketCanReceiver> receiver_;
   std::unique_ptr<std::thread> receiver_thread_;
   std::chrono::nanoseconds interval_ns_;
   bool use_bus_time_;
+  int cnt;
 };
 }  // namespace socketcan
 }  // namespace drivers

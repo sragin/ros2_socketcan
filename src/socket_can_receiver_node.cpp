@@ -33,12 +33,16 @@ namespace socketcan
 SocketCanReceiverNode::SocketCanReceiverNode(rclcpp::NodeOptions options)
 : lc::LifecycleNode("socket_can_receiver_node", options)
 {
-  interface_ = this->declare_parameter("interface", "can0");
+  interface_ = this->declare_parameter("interface", "can2");
+  topic_name_ = this->declare_parameter("topic_name", "test_popic");
   use_bus_time_ = this->declare_parameter<bool>("use_bus_time", false);
   double interval_sec = this->declare_parameter("interval_sec", 0.01);
   interval_ns_ = std::chrono::duration_cast<std::chrono::nanoseconds>(
     std::chrono::duration<double>(interval_sec));
 
+  cnt = 0;
+
+  RCLCPP_INFO(this->get_logger(), "node name: %s", get_name());
   RCLCPP_INFO(this->get_logger(), "interface: %s", interface_.c_str());
   RCLCPP_INFO(this->get_logger(), "interval(s): %f", interval_sec);
   RCLCPP_INFO(this->get_logger(), "use bus time: %d", use_bus_time_);
@@ -58,7 +62,7 @@ LNI::CallbackReturn SocketCanReceiverNode::on_configure(const lc::State & state)
   }
 
   RCLCPP_DEBUG(this->get_logger(), "Receiver successfully configured.");
-  frames_pub_ = this->create_publisher<can_msgs::msg::Frame>("from_can_bus", 500);
+  frames_pub_ = this->create_publisher<can_msgs::msg::Frame>(topic_name_, 500);
 
   receiver_thread_ = std::make_unique<std::thread>(&SocketCanReceiverNode::receive, this);
 
@@ -69,6 +73,7 @@ LNI::CallbackReturn SocketCanReceiverNode::on_activate(const lc::State & state)
 {
   (void)state;
   frames_pub_->on_activate();
+  RCLCPP_INFO(this->get_logger(), "[Node=%s]Topic name:%s", get_name(), frames_pub_->get_topic_name());
   RCLCPP_DEBUG(this->get_logger(), "Receiver activated.");
   return LNI::CallbackReturn::SUCCESS;
 }
@@ -127,11 +132,17 @@ void SocketCanReceiverNode::receive()
     } else {
       frame_msg.header.stamp = this->now();
     }
+    
     frame_msg.id = receive_id.identifier();
     frame_msg.is_rtr = (receive_id.frame_type() == FrameType::REMOTE);
     frame_msg.is_extended = receive_id.is_extended();
     frame_msg.is_error = (receive_id.frame_type() == FrameType::ERROR);
-    frame_msg.dlc = receive_id.length();
+    frame_msg.dlc = receive_id.length();   
+    // if (cnt % 100 == 0) {   
+      RCLCPP_INFO(this->get_logger(), "Get CAN Messages ID=0x%06x Data=0x%08x", frame_msg.id, frame_msg.data);
+      cnt = 0;
+    // }
+    // cnt++;
     frames_pub_->publish(std::move(frame_msg));
   }
 }
