@@ -13,8 +13,8 @@
   </include>
 
   <arg name="node_name" default="socket_can_receiver1"/>
-  <arg name="topic_name" default="from_can_bus1"/>
-  <arg name="interface" default="can1" />
+  <arg name="topic_name" default="from_can_bus3"/>
+  <arg name="interface" default="can3" />
 
   <include file="$(find-pkg-share ros2_socketcan)/launch/socket_can_receiver.launch.py">
     <arg name="node_name" value="$(var node_name)"/>
@@ -34,9 +34,9 @@
     <arg name="timeout_sec" value="$(var sender_timeout_sec)" />
   </include>
 
-  <arg name="node_name" default="socket_can_sender1"/>
-  <arg name="interface" default="can1"/>
-  <arg name="topic_name" default="to_can_bus1"/>
+  <arg name="node_name" default="socket_can_sender3"/>
+  <arg name="interface" default="can3"/>
+  <arg name="topic_name" default="to_can_bus3"/>
 
   <include file="$(find-pkg-share ros2_socketcan)/launch/socket_can_sender.launch.py">
     <arg name="node_name" value="$(var node_name)"/>
