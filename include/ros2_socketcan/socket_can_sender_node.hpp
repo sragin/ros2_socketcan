@@ -71,6 +71,7 @@ public:
 
 private:
   std::string interface_;
+  std::string topic_name_;
   rclcpp::Subscription<can_msgs::msg::Frame>::SharedPtr frames_sub_;
   std::unique_ptr<SocketCanSender> sender_;
   std::chrono::nanoseconds timeout_ns_;

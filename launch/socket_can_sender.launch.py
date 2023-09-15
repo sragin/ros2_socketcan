@@ -32,12 +32,12 @@ def generate_launch_description():
     socket_can_sender_node = LifecycleNode(
         package='ros2_socketcan',
         executable='socket_can_sender_node_exe',
-        name='socket_can_sender',
+        name=LaunchConfiguration('node_name'),
         namespace=TextSubstitution(text=''),
         parameters=[{
             'interface': LaunchConfiguration('interface'),
-            'timeout_sec':
-            LaunchConfiguration('timeout_sec'),
+            'timeout_sec': LaunchConfiguration('timeout_sec'),
+            'topic_name': LaunchConfiguration('topic_name'),
         }],
         output='screen')
 
@@ -78,6 +78,8 @@ def generate_launch_description():
         DeclareLaunchArgument('timeout_sec', default_value='0.01'),
         DeclareLaunchArgument('auto_configure', default_value='true'),
         DeclareLaunchArgument('auto_activate', default_value='true'),
+        DeclareLaunchArgument('topic_name', default_value='to_can_bus'),
+        DeclareLaunchArgument('node_name', default_value='socket_can_sender_node'),
         socket_can_sender_node,
         socket_can_sender_configure_event_handler,
         socket_can_sender_activate_event_handler,

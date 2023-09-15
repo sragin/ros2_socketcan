@@ -138,11 +138,11 @@ void SocketCanReceiverNode::receive()
     frame_msg.is_extended = receive_id.is_extended();
     frame_msg.is_error = (receive_id.frame_type() == FrameType::ERROR);
     frame_msg.dlc = receive_id.length();   
-    // if (cnt % 100 == 0) {   
+    if (cnt % 100 == 0) {   
       RCLCPP_INFO(this->get_logger(), "Get CAN Messages ID=0x%06x Data=0x%08x", frame_msg.id, frame_msg.data);
       cnt = 0;
-    // }
-    // cnt++;
+    }
+    cnt++;
     frames_pub_->publish(std::move(frame_msg));
   }
 }

@@ -33,12 +33,14 @@ SocketCanSenderNode::SocketCanSenderNode(rclcpp::NodeOptions options)
 : lc::LifecycleNode("socket_can_sender_node", options)
 {
   interface_ = this->declare_parameter("interface", "can0");
+  topic_name_ = this->declare_parameter("topic_name", "to_can_bus");
   double timeout_sec = this->declare_parameter("timeout_sec", 0.01);
   timeout_ns_ = std::chrono::duration_cast<std::chrono::nanoseconds>(
     std::chrono::duration<double>(timeout_sec));
 
   cnt = 0;
 
+  RCLCPP_INFO(this->get_logger(), "node name: %s", get_name());
   RCLCPP_INFO(this->get_logger(), "interface: %s", interface_.c_str());
   RCLCPP_INFO(this->get_logger(), "timeout(s): %f", timeout_sec);
 }
@@ -58,7 +60,7 @@ LNI::CallbackReturn SocketCanSenderNode::on_configure(const lc::State & state)
 
   RCLCPP_DEBUG(this->get_logger(), "Sender successfully configured.");
   frames_sub_ = this->create_subscription<can_msgs::msg::Frame>(
-    "to_can_bus", 500, std::bind(&SocketCanSenderNode::on_frame, this, std::placeholders::_1));
+    topic_name_, 500, std::bind(&SocketCanSenderNode::on_frame, this, std::placeholders::_1));
 
   return LNI::CallbackReturn::SUCCESS;
 }
@@ -108,9 +110,9 @@ void SocketCanSenderNode::on_frame(const can_msgs::msg::Frame::SharedPtr msg)
       CanId(msg->id, 0, type, StandardFrame);
     try {
       sender_->send(msg->data.data(), msg->dlc, send_id, timeout_ns_);
-      if (cnt++ % 100 == 0) {
-        RCLCPP_INFO(this->get_logger(), "send %x", msg->data.data());
-        cnt = 0;
+      if (this->cnt++ % 100 == 0) {
+        RCLCPP_INFO(this->get_logger(), "Send CAN Messages ID=0x%06x Data=%08x", send_id, msg->data.data());
+        this->cnt = 0;
       }
     } catch (const std::exception & ex) {
       RCLCPP_WARN_THROTTLE(

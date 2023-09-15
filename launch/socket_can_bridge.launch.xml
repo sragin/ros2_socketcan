@@ -13,8 +13,8 @@
   </include>
 
   <arg name="node_name" default="socket_can_receiver1"/>
-  <arg name="topic_name" default="from_can_bus3"/>
-  <arg name="interface" default="can3" />
+  <arg name="topic_name" default="from_can_bus1"/>
+  <arg name="interface" default="can1" />
 
   <include file="$(find-pkg-share ros2_socketcan)/launch/socket_can_receiver.launch.py">
     <arg name="node_name" value="$(var node_name)"/>
@@ -23,25 +23,20 @@
     <arg name="interval_sec" value="$(var receiver_interval_sec)" />
   </include>
 
-  <arg name="node_name" default="socket_can_sender"/>
-  <arg name="interface" default="can0"/>
+  <arg name="interface_send" default="can0"/>
   <arg name="topic_name" default="to_can_bus"/>
-
   <include file="$(find-pkg-share ros2_socketcan)/launch/socket_can_sender.launch.py">
     <arg name="node_name" value="$(var node_name)"/>
     <arg name="topic_name" value="$(var topic_name)"/>
     <arg name="interface" value="$(var interface)" />
     <arg name="timeout_sec" value="$(var sender_timeout_sec)" />
+    <arg name="topic_name" value="$(var topic_name)"/>
   </include>
 
-  <arg name="node_name" default="socket_can_sender3"/>
-  <arg name="interface" default="can3"/>
-  <arg name="topic_name" default="to_can_bus3"/>
-
+  <arg name="interface_send" default="can1"/>
+  <arg name="topic_name" default="to_can_bus1"/>
   <include file="$(find-pkg-share ros2_socketcan)/launch/socket_can_sender.launch.py">
-    <arg name="node_name" value="$(var node_name)"/>
+    <arg name="interface" value="$(var interface_send)" />
     <arg name="topic_name" value="$(var topic_name)"/>
-    <arg name="interface" value="$(var interface)" />
-    <arg name="timeout_sec" value="$(var sender_timeout_sec)" />
   </include>
 </launch>
