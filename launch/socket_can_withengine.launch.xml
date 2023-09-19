@@ -24,7 +24,7 @@
         <arg name="interval_sec" value="$(var receiver_interval_sec)" />
     </include>
 
-    <arg name="node_name2" default="socket_can_receiver2"/>
+    <!-- <arg name="node_name2" default="socket_can_receiver2"/>
     <arg name="topic_name2" default="from_can_bus2"/>
     <arg name="interface2" default="can2" />
 
@@ -33,7 +33,7 @@
         <arg name="topic_name" value="$(var topic_name2)"/>
         <arg name="interface" value="$(var interface2)" />
         <arg name="interval_sec" value="$(var receiver_interval_sec)" />
-    </include>  
+    </include>   -->
 
     <!-- Send -->
     <arg name="interface_send" default="can0"/>
