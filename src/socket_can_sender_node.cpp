@@ -110,10 +110,10 @@ void SocketCanSenderNode::on_frame(const can_msgs::msg::Frame::SharedPtr msg)
       CanId(msg->id, 0, type, StandardFrame);
     try {
       sender_->send(msg->data.data(), msg->dlc, send_id, timeout_ns_);
-      if (this->cnt++ % 100 == 0) {
-        RCLCPP_INFO(this->get_logger(), "Send CAN Messages ID=0x%06x Data=%08x", send_id, msg->data.data());
-        this->cnt = 0;
-      }
+      // if (this->cnt++ % 100 == 0) {
+      //   RCLCPP_INFO(this->get_logger(), "Send CAN Messages ID=0x%06x Data=%08x", send_id, msg->data.data());
+      //   this->cnt = 0;
+      // }
     } catch (const std::exception & ex) {
       RCLCPP_WARN_THROTTLE(
         this->get_logger(), *this->get_clock(), 1000,
