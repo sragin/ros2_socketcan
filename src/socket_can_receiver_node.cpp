@@ -14,6 +14,7 @@
 //
 // Co-developed by Tier IV, Inc. and Apex.AI, Inc.
 
+#include <rclcpp/qos.hpp>
 #include "ros2_socketcan/socket_can_receiver_node.hpp"
 
 #include <chrono>
@@ -62,7 +63,10 @@ LNI::CallbackReturn SocketCanReceiverNode::on_configure(const lc::State & state)
   }
 
   RCLCPP_DEBUG(this->get_logger(), "Receiver successfully configured.");
-  frames_pub_ = this->create_publisher<can_msgs::msg::Frame>(topic_name_, 500);
+  rclcpp::QoS qos_profile(500);
+  rclcpp::Duration deadline_duration(1, 0);
+  qos_profile.deadline(deadline_duration);
+  frames_pub_ = this->create_publisher<can_msgs::msg::Frame>(topic_name_, qos_profile);
 
   receiver_thread_ = std::make_unique<std::thread>(&SocketCanReceiverNode::receive, this);
 
