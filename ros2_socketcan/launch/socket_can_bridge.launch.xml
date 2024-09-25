@@ -1,7 +1,7 @@
 <launch>
 
-  <arg name="receiver_interval_sec" default="0.01" />
-  <arg name="sender_timeout_sec" default="0.01" />
+  <arg name="receiver_interval_sec" default="0.1" />
+  <arg name="sender_timeout_sec" default="0.1" />
   <arg name="enable_can_fd" default="false" />
   <arg name="from_can_bus_topic" default="from_can_bus" />
   <arg name="to_can_bus_topic" default="to_can_bus" />
